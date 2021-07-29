@@ -1,6 +1,6 @@
 *** Settings ***
 Library                ../SSH_library/TestSSH.py
-Resource               ../Resource/variables1.robot
+Resource               ../Resources/variables.robot
 
 *** Test Cases ***
 Check Hostname
@@ -17,19 +17,19 @@ Check Network
 
 Make Directory
     Create Directory    directory3
-    ${RESULT}           DIRECTORY SHOULD EXIST  directory3
-    Should Be Equal As Integers   ${RESULT}  1
+    SHOULD EXIST        directory3
+
 
 Make File
-    Create File        file12.txt   my name is waseem   .
-    File Should Exist  file12.txt
+    Create File        dir1/file12.txt   my name is waseem   .
+    Should Exist       dir1/file12.txt
 
 Put File
-    Put File        ./file123.txt   file123.txt
-    File Should Exist  file123.txt
+    Put File        ./Resources/to_send_file.txt   from_local_file.txt
+    Should Exist  from_local_file.txt
 
 Get File
-    Get File        file11.txt   ./file13.txt
+    Get File        file11.txt   ./fetched_file.txt
 
 Remove File From Virtual
     Create File        file2.txt   my name is waseem   dir1

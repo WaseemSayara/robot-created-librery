@@ -1,3 +1,5 @@
 .idea/
 SSH_library/__pycache__/
 SSH_library/__pycache__
+*.html
+*.xml

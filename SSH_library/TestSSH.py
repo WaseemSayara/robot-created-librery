@@ -1,4 +1,5 @@
 import paramiko
+
 __version__ = '0.1'
 
 
@@ -29,7 +30,7 @@ class TestSSH:
         return stdout.readlines()
 
     def get_hostname(self):
-        hostname = TestSSH.execute_command(self,'hostname')
+        hostname = TestSSH.execute_command(self, 'hostname')
         output = (hostname[0]).strip()
         return output
 
@@ -38,7 +39,7 @@ class TestSSH:
         return "".join(network)
 
     def create_directory(self, dir_name):
-        exist = self.directory_should_exist(dir_name)
+        exist = self.should_exist(dir_name)
         if exist == 1:
             sftp = self.client.open_sftp()
             sftp.rmdir(dir_name)
@@ -48,35 +49,27 @@ class TestSSH:
         sftp.close()
         return
 
-    def directory_should_exist(self, dir_name):
+    def should_exist(self, wanted_file):
         try:
             sftp = self.client.open_sftp()
-            index = str(dir_name).rfind("/")
-            name = dir_name
+            index = str(wanted_file).rfind("/")
+            name = wanted_file
             print(index)
             if index == -1:
                 list_of_dirs = sftp.listdir()
             else:
-                path = dir_name[:index + 1]
-                name = dir_name[index+1:]
+                path = wanted_file[:index + 1]
+                name = wanted_file[index + 1:]
                 list_of_dirs = sftp.listdir(path)
             sftp.close()
             if name in list_of_dirs:
                 return 1
             else:
-                return 0
-        except FileNotFoundError:
-            print("The directory ( " + dir_name + ")  is not found, make sure the path is correct")
-            raise
+                raise FileNotFoundError('file or directory ' + wanted_file + 'not found')
 
-    def file_should_exist(self, file_name):
-        sftp = self.client.open_sftp()
-        list_of_dirs = sftp.listdir()
-        sftp.close()
-        if file_name in list_of_dirs:
-            return 1
-        else:
-            return 0
+        except FileNotFoundError:
+            print("The directory ( " + wanted_file + ")  is not found, make sure the path is correct")
+            raise
 
     def create_file(self, file_name, file_content, directory):
         self.execute_command('touch ' + str(directory).strip() + '/' + str(file_name))
@@ -139,4 +132,3 @@ class TestSSH:
     def logout_from_host(self):
         self.client.close()
         return
-
